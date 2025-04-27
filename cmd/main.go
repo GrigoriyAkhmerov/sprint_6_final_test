@@ -9,8 +9,7 @@ import (
 func main() {
 	logger := log.New(log.Writer(), "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
 	server := server.Router(logger)
-	err := server.StartServer()
-	err != nil {
-		server.Logger.Fatalf("Error starting server: %s", err)
+	if err := server.StartServer(); err != nil {
+		server.Logger.Fatalf("starting server error: %s", err)
 	}
 }
