@@ -7,17 +7,15 @@ import (
 )
 
 // ConvertText function at first determine type of text (Morse code or simple text) and then convert them to each other type.
-func ConvertText(text string) string {
-
+func ConvertText(text string) (string, error) {
 	f := func(r rune) bool {
-		return r == '-' || r == '.' || r == ' '
+		return r == '-' || r == '.'
 	}
-	switch strings.ContainsFunc(text, f) {
-	case true:
-		return morse.ToText(text)
-	case false:
-		return morse.ToMorse(text)
-	default:
-		return morse.ErrNoEncoding.Error(morse.ErrNoEncoding{})
+	if !strings.ContainsFunc(text, f) {
+		return morse.ToText(text), nil
 	}
+	if strings.ContainsFunc(text, f) {
+		return morse.ToMorse(text), nil
+	}
+	return "converting text error", morse.ErrNoEncoding{}
 }

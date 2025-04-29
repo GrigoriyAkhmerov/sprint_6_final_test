@@ -1,8 +1,8 @@
 package handlers
 
 import (
+	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -13,17 +13,16 @@ import (
 
 // RootEndpointHandler returns HTML from index.html file for root endpoint.
 // Point 1.
-func RootEndpointHandler(res http.ResponseWriter, req *http.Request) {
-	indexData, err := os.ReadFile("index.html")
-	if err != nil {
-		log.Fatal(err)
-	}
-	res.Write(indexData)
+func RootEndpointHandler(w http.ResponseWriter, r *http.Request) {
+	r.Header.Add("Content-Type", "text/html")
+	fmt.Printf("Method: %s\n", r.Method)
+	http.ServeFile(w, r, "./index.html")
 }
 
 // UploadEndpointHandler for endpoint /upload.
 func UploadEndpointHandler(res http.ResponseWriter, req *http.Request) {
-
+	res.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	fmt.Printf("Method: %s\n", req.Method)
 	// Point 2. Getting file from Form.
 	file, _, err := req.FormFile("attach")
 	if err != nil {
@@ -41,7 +40,7 @@ func UploadEndpointHandler(res http.ResponseWriter, req *http.Request) {
 	}
 
 	// Point 4. Sending data from file to ConvertText function from package service.
-	convertedText := service.ConvertText(string(dataFromFile))
+	convertedText, err := service.ConvertText(string(dataFromFile))
 
 	// Point 5. Creating local file.
 	localFileName := time.Now().UTC().String() + filepath.Ext("text.txt")
@@ -59,5 +58,9 @@ func UploadEndpointHandler(res http.ResponseWriter, req *http.Request) {
 		http.Error(res, "writing to file error", http.StatusInternalServerError)
 		return
 	}
-	res.Write([]byte(convertedText))
+	_, err = res.Write([]byte(convertedText))
+	if err != nil {
+		http.Error(res, "writing to slice error", http.StatusInternalServerError)
+		return
+	}
 }

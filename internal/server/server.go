@@ -16,7 +16,7 @@ type Server struct {
 
 // Point 2. Router function creating http-router.
 func (s *Server) StartServer() error {
-	s.Logger.Println("Server is running")
+	s.Logger.Printf("Server is running. Port%s", s.HttpServer.Addr)
 	return s.HttpServer.ListenAndServe()
 }
 
