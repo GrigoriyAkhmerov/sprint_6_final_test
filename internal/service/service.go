@@ -11,10 +11,10 @@ func ConvertText(text string) (string, error) {
 	f := func(r rune) bool {
 		return r == '-' || r == '.'
 	}
-	if !strings.ContainsFunc(text, f) {
+	if strings.ContainsFunc(text, f) {
 		return morse.ToText(text), nil
 	}
-	if strings.ContainsFunc(text, f) {
+	if !strings.ContainsFunc(text, f) {
 		return morse.ToMorse(text), nil
 	}
 	return "converting text error", morse.ErrNoEncoding{}

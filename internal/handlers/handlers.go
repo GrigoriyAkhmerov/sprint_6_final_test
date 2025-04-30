@@ -24,7 +24,7 @@ func UploadEndpointHandler(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	fmt.Printf("Method: %s\n", req.Method)
 	// Point 2. Getting file from Form.
-	file, _, err := req.FormFile("attach")
+	file, _, err := req.FormFile("myFile")
 	if err != nil {
 		http.Error(res, "file upload error", http.StatusInternalServerError)
 		return
@@ -43,7 +43,7 @@ func UploadEndpointHandler(res http.ResponseWriter, req *http.Request) {
 	convertedText, err := service.ConvertText(string(dataFromFile))
 
 	// Point 5. Creating local file.
-	localFileName := time.Now().UTC().String() + filepath.Ext("text.txt")
+	localFileName := time.Now().UTC().Format("02_01_2006_15_04_05") + filepath.Ext("text.txt")
 
 	localFile, err := os.Create(localFileName)
 	if err != nil {
